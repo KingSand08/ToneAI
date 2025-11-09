@@ -1,2 +1,6 @@
+# VS Code Settings
 */.DS_Store
 .DS_Store
+
+# Tone AI Data Files
+training data/*
