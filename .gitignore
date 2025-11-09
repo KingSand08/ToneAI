@@ -2,5 +2,8 @@
 */.DS_Store
 .DS_Store
 
+# Python environment variables
+.venv
+
 # Tone AI Data Files
 training data/files
