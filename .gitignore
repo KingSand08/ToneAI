@@ -3,4 +3,4 @@
 .DS_Store
 
 # Tone AI Data Files
-training data/*
+training data/files
