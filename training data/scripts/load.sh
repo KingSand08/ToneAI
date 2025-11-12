@@ -5,15 +5,15 @@ DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 echo "➡️ Starting To load data ➡️ "
 
 echo "⌛️ Loading CREMA-D..."
-# bash "$DIR/load-crema.sh"
 python3 "$DIR/load-crema.py"
 echo "✅ Loaded CREMA-D..."
 
 echo "⌛️ Loading EmoGator..."
-if [ -x "$DIR/load-emo.sh" ]; then
-  python3 "$DIR/load-crema.py"
-else
-  echo "Skipping EmoGator (script missing)..."
-fi
+python3 "$DIR/load-emogator.py"
+echo "✅ Loaded EmoGator..."
+
+echo "⌛️ Combining Data Files..."
+python3 "$DIR/combine_data.py"
+echo "✅ Data Files Combined..."
 
 echo "🏁 Finished Loading Data 🏁"

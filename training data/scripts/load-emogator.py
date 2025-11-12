@@ -56,7 +56,7 @@ if not DATA_DIR.exists():
 #! 20: Aggressiveness = Pride (annoyance/boredom)
 #  21: {Trust = [Trust, i2]} = Realization
 #! 22: Joy/Trust = Relief
-#! 23: Love = Romantic Love (ecstasy/admiration), Relief (trust/joy)
+#! 23: Love = Romantic Love (ecstasy/admiration)
 #  24: {Sad = [Sad, i2]} = Sadness
 #  25: {Serenity = [Joy, i1]} = Serenity
 #! 26: Remorse = Shame (loathing/grief)
@@ -90,7 +90,20 @@ emogator_to_our = {
     '03': 'Anger',
     # Anticipation
     '17': 'Anticipation',
+    # Skip
+    '04': None, '05': None, '06': None, '08': None, '09': None, '13': None, '14': None, '20': None, '23': None, '26': None, '29': None, 
 }
+
+# We are not using this as of now
+emotion_of_intensity_only = {
+    # Intensity 1
+    '07':'I1', '11':'I1', '17':'I1', '25':'I1',
+    # Intensity 2
+    '02':'I2', '03':'I2', '10':'I2', '15':'I2', '18':'I2', '21':'I2', '24':'I2', '27':'I2', '28':'I2', 
+    # Intensity 3
+    '01':'I3', '12':'I3', '16':'I3', '19':'I3', '30':'I3'
+}
+
 
 # Intensity mapping: last digit (1, 2, 3)
 # 1 = Low intensity (I1), 2 = Medium intensity (I2), 3 = High intensity (I3)
@@ -123,13 +136,16 @@ for abspath in files:
         continue
     emo = m.group('emo')
     inten = m.group('inten')
-
+    
+    our = emogator_to_our.get(emo)
+    if our not in ('Joy','Trust','Fear','Surprise','Sadness','Disgust','Anger','Anticipation'):
+        continue
+    
     row = OrderedDict((c, 0) for c in columns)
     row['dataset'] = 'EmoGator'
     row['Id'] = rid
     row['File'] = str(pathlib.Path(abspath).relative_to(DATA_DIR))
 
-    our = emogator_to_our.get(emo)
     if our in ('Joy','Trust','Fear','Surprise','Sadness','Disgust','Anger','Anticipation'):
         row[our] = 1
 
