@@ -11,7 +11,7 @@ echo "✅ Loaded CREMA-D..."
 
 echo "⌛️ Loading EmoGator..."
 if [ -x "$DIR/load-emo.sh" ]; then
-  bash "$DIR/load-emo.sh"
+  python3 "$DIR/load-crema.py"
 else
   echo "Skipping EmoGator (script missing)..."
 fi

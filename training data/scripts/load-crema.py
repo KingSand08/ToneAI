@@ -37,15 +37,15 @@ code_to_our = {
     'SAD': 'Sadness',
     'DIS': 'Disgust',
     'ANG': 'Anger',
-    'NEU': None,  # Neutral → keep all eight emotion columns at 0
+    'NEU': 'Neutral',  # Neutral → keep all eight emotion columns at 0
 }
 
 # Intensity: LO→I1, MD→I2, HI→I3; XX→none
-inten_to_ix = {'LO': 'I1', 'MD': 'I2', 'HI': 'I3'}
+inten_to_ix = {'LO': 'I1', 'MD': 'I2', 'HI': 'I3', 'XX':'I2'}
 
 columns = [
     'Id','dataset','File',
-    'Joy','Trust','Fear','Surprise','Sadness','Disgust','Anger','Anticipation',
+    'Neutral','Joy','Trust','Fear','Surprise','Sadness','Disgust','Anger','Anticipation',
     'I1','I2','I3',
 ]
 
@@ -74,7 +74,7 @@ for abspath in files:
     row['File'] = str(pathlib.Path(abspath).relative_to(DATA_DIR))
 
     our = code_to_our.get(emo)
-    if our in ('Joy','Trust','Fear','Surprise','Sadness','Disgust','Anger','Anticipation'):
+    if our in ('Neutral','Joy','Trust','Fear','Surprise','Sadness','Disgust','Anger','Anticipation'):
         row[our] = 1
 
     ix = inten_to_ix.get(inten)
