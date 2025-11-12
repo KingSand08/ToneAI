@@ -37,11 +37,11 @@ code_to_our = {
     'SAD': 'Sadness',
     'DIS': 'Disgust',
     'ANG': 'Anger',
-    'NEU': 'Neutral',  # Neutral → keep all eight emotion columns at 0
+    'NEU': 'Neutral',
 }
 
 # Intensity: LO→I1, MD→I2, HI→I3; XX→none
-inten_to_ix = {'LO': 'I1', 'MD': 'I2', 'HI': 'I3', 'XX':'I2'}
+inten_to_ix = {'LO': 'I1', 'MD': 'I2', 'XX':'I2', 'HI': 'I3'}
 
 columns = [
     'Id','dataset','File',
