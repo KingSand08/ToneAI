@@ -32,24 +32,18 @@ if not DATA_DIR.exists():
 # Mapping EmoGator emotions to standard 8 emotion categories (consistent with CREMA-D)
 # Based on EmoGator dataset documentation:
 # 01-05: Anger, 06-10: Disgust, 11-15: Fear, 16-20: Joy, 21-25: Neutral, 26-30: Sadness
-emogator_to_our = {
-    # Anger (01-05)
-    '01': 'Anger', '02': 'Anger', '03': 'Anger', '04': 'Anger', '05': 'Anger',
-    # Disgust (06-10)
-    '06': 'Disgust', '07': 'Disgust', '08': 'Disgust', '09': 'Disgust', '10': 'Disgust',
-    # Fear (11-15)
-    '11': 'Fear', '12': 'Fear', '13': 'Fear', '14': 'Fear', '15': 'Fear',
-    # Joy (16-20)
-    '16': 'Joy', '17': 'Joy', '18': 'Joy', '19': 'Joy', '20': 'Joy',
-    # Neutral (21-25) → keep all eight emotion columns at 0
-    '21': None, '22': None, '23': None, '24': None, '25': None,
-    # Sadness (26-30)
-    '26': 'Sadness', '27': 'Sadness', '28': 'Sadness', '29': 'Sadness', '30': 'Sadness',
+emotions= code_to_our = {
+    'HAP': 'Joy',
+    'FEA': 'Fear',
+    'SAD': 'Sadness',
+    'DIS': 'Disgust',
+    'ANG': 'Anger',
+    'NEU': 'Neutral',
 }
 
 # Intensity mapping: last digit (1, 2, 3)
 # 1 = Low intensity (I1), 2 = Medium intensity (I2), 3 = High intensity (I3)
-inten_to_ix = {'1': 'I1', '2': 'I2', '3': 'I3'}
+inten_to_ix = {'LO': 'I1', 'MD': 'I2', 'XX': 'I2', 'HI': 'I3', 'XX':'I2'}
 
 # EmoGator filename pattern: NNNNNN-EE-I.mp3
 pat = re.compile(r'^(?P<id>\d{6})-(?P<emo>\d{2})-(?P<inten>\d)\.mp3$', re.I)
