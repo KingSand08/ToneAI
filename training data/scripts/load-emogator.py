@@ -32,19 +32,64 @@ if not DATA_DIR.exists():
 # Mapping EmoGator emotions to standard 8 emotion categories (consistent with CREMA-D)
 # Based on EmoGator dataset documentation:
 # 01-05: Anger, 06-10: Disgust, 11-15: Fear, 16-20: Joy, 21-25: Neutral, 26-30: Sadness
+
+['Adoration', 'Amusement', 'Anger', 'Awe', 'Confusion', 'Contempt', 'Contentment', 'Desire', 'Disappointment', 'Disgust', 'Distress', 'Ecstasy', 'Elation', 'Embarrassment', 'Fear', 'Guilt', 'Interest', 'Neutral', 'Pain', 'Pride', 'Realization', 'Relief', 'Romantic Love', 'Sadness', 'Serenity', 'Shame', 'Surprise (Negative)', 'Surprise (Positive)', 'Sympathy', 'Triumph']
+#  01: {Ecstasy = [Joy, i3]} = Adoration
+#  02: {Joy = [Joy, i2]} = Amusement
+#  03: {Anger = [Anger, i2]} = Anger
+#! 04: Submissive = Awe (surprise/fear)
+#! 05: Surprise/Anticipation = Confusion
+#! 06: Contempt = Contempt (anger/disgust)
+#  07: {Acceptance = [Trust, i1]} = Contentment
+#! 08: Anticipation/Interest = Desire
+#! 09: Disapproval  = Disappointment (sadness/surprise)
+#  10: {Disgust = [Disgust, i2]} = Disgust
+#  11: {Apprehension = [Fear, i1]} = Distress
+#  12: {Ecstasy = [Joy, i3]} = Ecstasy
+#! 13: Joy/Ecstasy (4th layer blend) = Elation
+#! 14: Fear/Disgust = Embarrassment
+#  15: {Fear = [Fear, i2]} = Fear
+#  16: {Grief = [Sad, i3]} = Guilt
+#  17: {Interest = [Anticipation, i1]} = Interest
+#  18: {Neutral = [Neutral, i2]} = Neutral
+#  19: {Terror = [Fear, i3]} = Pain
+#! 20: Aggressiveness = Pride (annoyance/boredom)
+#  21: {Trust = [Trust, i2]} = Realization
+#! 22: Joy/Trust = Relief
+#! 23: Love = Romantic Love (ecstasy/admiration), Relief (trust/joy)
+#  24: {Sad = [Sad, i2]} = Sadness
+#  25: {Serenity = [Joy, i1]} = Serenity
+#! 26: Remorse = Shame (loathing/grief)
+#  27: {Surprise = [Surprise, i2]} = Surprise (Negative)
+#  28: {Surprise = [Surprise, i2]} = Surprise (Positive)
+#! 29: Optimism = Sympathy (interest/serenity)
+#  30: {Admiration = [Trust, i3]} = Triumph
+#! Anticipation = x
+#! Amazement = x
+#! Loathing = x
+#! Rage = x
+#! Vigilance = x
+#! Distraction = x
+#! Pensiveness = x
+#! Boredom = x
+#! Annoyance = x
 emogator_to_our = {
-    # Anger (01-05)
-    '01': 'Anger', '02': 'Anger', '03': 'Anger', '04': 'Anger', '05': 'Anger',
-    # Disgust (06-10)
-    '06': 'Disgust', '07': 'Disgust', '08': 'Disgust', '09': 'Disgust', '10': 'Disgust',
-    # Fear (11-15)
-    '11': 'Fear', '12': 'Fear', '13': 'Fear', '14': 'Fear', '15': 'Fear',
-    # Joy (16-20)
-    '16': 'Joy', '17': 'Joy', '18': 'Joy', '19': 'Joy', '20': 'Joy',
-    # Neutral (21-25) → keep all eight emotion columns at 0
-    '21': None, '22': None, '23': None, '24': None, '25': None,
-    # Sadness (26-30)
-    '26': 'Sadness', '27': 'Sadness', '28': 'Sadness', '29': 'Sadness', '30': 'Sadness',
+    # Joy
+    '01': 'Joy', '02': 'Joy', '12': 'Joy', '25': 'Joy',
+    # Trust
+    '07': 'Trust', '21': 'Trust', '30': 'Trust',
+    # Fear
+    '11': 'Fear', '15': 'Fear', '19': 'Fear',
+    # Surprise
+    '27': 'Surprise', '28': 'Surprise',
+    # Sad
+    '16': 'Sad', '24': 'Sad',
+    # Disgust
+    '10': 'Disgust',
+    # Anger
+    '03': 'Anger',
+    # Anticipation
+    '17': 'Anticipation',
 }
 
 # Intensity mapping: last digit (1, 2, 3)
