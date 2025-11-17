@@ -30,7 +30,7 @@ if not DATA_DIR.exists():
 # EmoGator filename: NNNNNN-EE-I.mp3 (id-emotion-intensity)
 # EE codes (01-30) map to different emotions
 # Mapping EmoGator emotions to standard 8 emotion categories (consistent with CREMA-D)
-# Based on EmoGator dataset documentation:
+# Based on EmoGator Dataset documentation:
 # 01-05: Anger, 06-10: Disgust, 11-15: Fear, 16-20: Joy, 21-25: Neutral, 26-30: Sadness
 
 # ['Adoration', 'Amusement', 'Anger', 'Awe', 'Confusion', 'Contempt', 'Contentment', 'Desire', 'Disappointment', 'Disgust', 'Distress', 'Ecstasy', 'Elation', 'Embarrassment', 'Fear', 'Guilt', 'Interest', 'Neutral', 'Pain', 'Pride', 'Realization', 'Relief', 'Romantic Love', 'Sadness', 'Serenity', 'Shame', 'Surprise (Negative)', 'Surprise (Positive)', 'Sympathy', 'Triumph']
@@ -115,7 +115,7 @@ inten_to_ix = {'1': 'I1', '2': 'I2', '3': 'I3'}
 pat = re.compile(r'^(?P<id>\d{6})-(?P<emo>\d{2})-(?P<inten>\d)\.mp3$', re.I)
 
 columns = [
-    'Id','dataset','File',
+    'Id','Dataset','File',
     'Neutral','Joy','Trust','Fear','Surprise','Sadness','Disgust','Anger','Anticipation',
     'I1','I2','I3',
 ]
@@ -144,7 +144,7 @@ for abspath in files:
         continue
     
     row = OrderedDict((c, 0) for c in columns)
-    row['dataset'] = 'EmoGator'
+    row['Dataset'] = 'EmoGator'
     row['Id'] = rid
     row['File'] = str(pathlib.Path(abspath).relative_to(DATA_DIR))
 

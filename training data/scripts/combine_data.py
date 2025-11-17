@@ -9,7 +9,7 @@ except Exception as e:
 
 # Known output schema (order matters)
 FINAL_COLS = [
-    'Id', 'File', 'dataset',
+    'Id', 'File', 'Dataset',
     'Neutral','Joy', 'Trust', 'Fear', 'Surprise', 'Sadness', 'Disgust', 'Anger', 'Anticipation',
     'I1', 'I2', 'I3',
 ]
@@ -22,10 +22,10 @@ def read_xlsx(path: pathlib.Path) -> pd.DataFrame:
         sys.exit(2)
     return pd.read_excel(path)
 
-def ensure_columns(df: pd.DataFrame, default_dataset: str) -> pd.DataFrame:
+def ensure_columns(df: pd.DataFrame, default_Dataset: str) -> pd.DataFrame:
     # Add missing columns with sensible defaults
-    if 'dataset' not in df.columns:
-        df['dataset'] = default_dataset
+    if 'Dataset' not in df.columns:
+        df['Dataset'] = default_Dataset
     if 'File' not in df.columns:
         df['File'] = ''
     for c in EMO_INT_COLS:
@@ -45,7 +45,7 @@ def coerce_types(df: pd.DataFrame) -> pd.DataFrame:
         df[c] = df[c].fillna(0).astype(int)
     df['Id'] = df['Id'].fillna(0).astype(int)
     df['File'] = df['File'].astype(str)
-    df['dataset'] = df['dataset'].astype(str)
+    df['Dataset'] = df['Dataset'].astype(str)
     return df
 
 def main():
@@ -66,9 +66,9 @@ def main():
     crema = read_xlsx(crema_path)
     emo   = read_xlsx(emo_path)
 
-    # Ensure schema & dataset labels (fallbacks if missing)
-    crema = ensure_columns(crema, default_dataset='CREMA-D')
-    emo   = ensure_columns(emo,   default_dataset='EmoGator')
+    # Ensure schema & Dataset labels (fallbacks if missing)
+    crema = ensure_columns(crema, default_Dataset='CREMA-D')
+    emo   = ensure_columns(emo,   default_Dataset='EmoGator')
 
     # Coerce types
     crema = coerce_types(crema)
@@ -77,9 +77,9 @@ def main():
     # Combine
     combined = pd.concat([crema, emo], ignore_index=True)
 
-    # Drop exact duplicates by dataset+File to be safe
-    if {'dataset','File'}.issubset(combined.columns):
-        combined = combined.drop_duplicates(subset=['dataset','File'], keep='first').reset_index(drop=True)
+    # Drop exact duplicates by Dataset+File to be safe
+    if {'Dataset','File'}.issubset(combined.columns):
+        combined = combined.drop_duplicates(subset=['Dataset','File'], keep='first').reset_index(drop=True)
 
     # Reassign Id to be contiguous 0..N-1
     combined['Id'] = range(len(combined))

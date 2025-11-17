@@ -44,7 +44,7 @@ code_to_our = {
 inten_to_ix = {'LO': 'I1', 'MD': 'I2', 'XX':'I2', 'HI': 'I3'}
 
 columns = [
-    'Id','dataset','File',
+    'Id','Dataset','File',
     'Neutral','Joy','Trust','Fear','Surprise','Sadness','Disgust','Anger','Anticipation',
     'I1','I2','I3',
 ]
@@ -69,7 +69,7 @@ for abspath in files:
     inten = m.group('inten').upper()
 
     row = OrderedDict((c, 0) for c in columns)
-    row['dataset'] = 'CREMA-D'
+    row['Dataset'] = 'CREMA-D'
     row['Id'] = rid
     row['File'] = str(pathlib.Path(abspath).relative_to(DATA_DIR))
 
