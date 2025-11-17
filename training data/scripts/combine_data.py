@@ -4,59 +4,59 @@ from collections import OrderedDict
 try:
     import pandas as pd  # requires openpyxl for xlsx I/O
 except Exception as e:
-    sys.stderr.write("[!] pandas/openpyxl required. Try: pip install pandas openpyxl\n")
+    sys.stderr.write('[!] pandas/openpyxl required. Try: pip install pandas openpyxl\n')
     raise
 
 # Known output schema (order matters)
 FINAL_COLS = [
-    "Id", "File", "dataset",
-    "Joy", "Trust", "Fear", "Surprise", "Sadness", "Disgust", "Anger", "Anticipation",
-    "I1", "I2", "I3",
+    'Id', 'File', 'dataset',
+    'Neutral','Joy', 'Trust', 'Fear', 'Surprise', 'Sadness', 'Disgust', 'Anger', 'Anticipation',
+    'I1', 'I2', 'I3',
 ]
 
-EMO_INT_COLS = ["Joy","Trust","Fear","Surprise","Sadness","Disgust","Anger","Anticipation","I1","I2","I3"]
+EMO_INT_COLS = ['Neutral','Joy','Trust','Fear','Surprise','Sadness','Disgust','Anger','Anticipation','I1','I2','I3']
 
 def read_xlsx(path: pathlib.Path) -> pd.DataFrame:
     if not path.exists():
-        sys.stderr.write(f"[!] Missing input: {path}\n")
+        sys.stderr.write(f'[!] Missing input: {path}\n')
         sys.exit(2)
     return pd.read_excel(path)
 
 def ensure_columns(df: pd.DataFrame, default_dataset: str) -> pd.DataFrame:
     # Add missing columns with sensible defaults
-    if "dataset" not in df.columns:
-        df["dataset"] = default_dataset
-    if "File" not in df.columns:
-        df["File"] = ""
+    if 'dataset' not in df.columns:
+        df['dataset'] = default_dataset
+    if 'File' not in df.columns:
+        df['File'] = ''
     for c in EMO_INT_COLS:
         if c not in df.columns:
             df[c] = 0
-    if "Id" not in df.columns:
-        df["Id"] = range(len(df))
+    if 'Id' not in df.columns:
+        df['Id'] = range(len(df))
     # Keep only the known columns (extras are dropped), and in the desired order
     for c in FINAL_COLS:
         if c not in df.columns:
             # create any remaining missing with neutral defaults
-            df[c] = 0 if c in EMO_INT_COLS or c in ("I1","I2","I3","Id") else ""
+            df[c] = 0 if c in EMO_INT_COLS or c in ('I1','I2','I3','Id') else ''
     return df[FINAL_COLS]
 
 def coerce_types(df: pd.DataFrame) -> pd.DataFrame:
-    for c in EMO_INT_COLS + ["I1","I2","I3"]:
+    for c in EMO_INT_COLS + ['I1','I2','I3']:
         df[c] = df[c].fillna(0).astype(int)
-    df["Id"] = df["Id"].fillna(0).astype(int)
-    df["File"] = df["File"].astype(str)
-    df["dataset"] = df["dataset"].astype(str)
+    df['Id'] = df['Id'].fillna(0).astype(int)
+    df['File'] = df['File'].astype(str)
+    df['dataset'] = df['dataset'].astype(str)
     return df
 
 def main():
     script_dir = pathlib.Path(__file__).resolve().parent
     base_dir   = script_dir.parent
-    cat_dir    = base_dir / "categories"
+    cat_dir    = base_dir / 'categories'
 
     parser = argparse.ArgumentParser()
-    parser.add_argument("--crema", default=str(cat_dir / "crema-test.xlsx"))
-    parser.add_argument("--emo",   default=str(cat_dir / "emo-test.xlsx"))
-    parser.add_argument("--out",   default=str(cat_dir / "data.xlsx"))
+    parser.add_argument('--crema', default=str(cat_dir / 'crema-test.xlsx'))
+    parser.add_argument('--emo',   default=str(cat_dir / 'emo-test.xlsx'))
+    parser.add_argument('--out',   default=str(cat_dir / 'data.xlsx'))
     args = parser.parse_args()
 
     crema_path = pathlib.Path(args.crema)
@@ -67,8 +67,8 @@ def main():
     emo   = read_xlsx(emo_path)
 
     # Ensure schema & dataset labels (fallbacks if missing)
-    crema = ensure_columns(crema, default_dataset="CREMA-D")
-    emo   = ensure_columns(emo,   default_dataset="EmoGator")
+    crema = ensure_columns(crema, default_dataset='CREMA-D')
+    emo   = ensure_columns(emo,   default_dataset='EmoGator')
 
     # Coerce types
     crema = coerce_types(crema)
@@ -78,19 +78,19 @@ def main():
     combined = pd.concat([crema, emo], ignore_index=True)
 
     # Drop exact duplicates by dataset+File to be safe
-    if {"dataset","File"}.issubset(combined.columns):
-        combined = combined.drop_duplicates(subset=["dataset","File"], keep="first").reset_index(drop=True)
+    if {'dataset','File'}.issubset(combined.columns):
+        combined = combined.drop_duplicates(subset=['dataset','File'], keep='first').reset_index(drop=True)
 
     # Reassign Id to be contiguous 0..N-1
-    combined["Id"] = range(len(combined))
+    combined['Id'] = range(len(combined))
 
     # Final column order & types
     combined = combined[FINAL_COLS]
     combined = coerce_types(combined)
 
     out_path.parent.mkdir(parents=True, exist_ok=True)
-    combined.to_excel(out_path, index=False, engine="openpyxl")
-    print(f"[OK] Wrote {out_path} with {len(combined)} rows.")
+    combined.to_excel(out_path, index=False, engine='openpyxl')
+    print(f'[OK] Wrote {out_path} with {len(combined)} rows.')
 
-if __name__ == "__main__":
+if __name__ == '__main__':
     main()

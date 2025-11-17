@@ -5,7 +5,7 @@ from collections import OrderedDict
 # --- args & defaults (CLI > env > defaults from script location) ---
 script_dir = pathlib.Path(__file__).resolve().parent
 base_dir   = script_dir.parent
-def_data   = base_dir / "files" / "EmoGator-main" / "data" / "mp3"
+def_data   = base_dir / "files" / "EmoGator" / "data" / "mp3"
 def_out    = base_dir / "categories" / "emo-test.xlsx"
 
 p = argparse.ArgumentParser()
@@ -33,7 +33,7 @@ if not DATA_DIR.exists():
 # Based on EmoGator dataset documentation:
 # 01-05: Anger, 06-10: Disgust, 11-15: Fear, 16-20: Joy, 21-25: Neutral, 26-30: Sadness
 
-['Adoration', 'Amusement', 'Anger', 'Awe', 'Confusion', 'Contempt', 'Contentment', 'Desire', 'Disappointment', 'Disgust', 'Distress', 'Ecstasy', 'Elation', 'Embarrassment', 'Fear', 'Guilt', 'Interest', 'Neutral', 'Pain', 'Pride', 'Realization', 'Relief', 'Romantic Love', 'Sadness', 'Serenity', 'Shame', 'Surprise (Negative)', 'Surprise (Positive)', 'Sympathy', 'Triumph']
+# ['Adoration', 'Amusement', 'Anger', 'Awe', 'Confusion', 'Contempt', 'Contentment', 'Desire', 'Disappointment', 'Disgust', 'Distress', 'Ecstasy', 'Elation', 'Embarrassment', 'Fear', 'Guilt', 'Interest', 'Neutral', 'Pain', 'Pride', 'Realization', 'Relief', 'Romantic Love', 'Sadness', 'Serenity', 'Shame', 'Surprise (Negative)', 'Surprise (Positive)', 'Sympathy', 'Triumph']
 #  01: {Ecstasy = [Joy, i3]} = Adoration
 #  02: {Joy = [Joy, i2]} = Amusement
 #  03: {Anger = [Anger, i2]} = Anger
@@ -74,6 +74,8 @@ if not DATA_DIR.exists():
 #! Boredom = x
 #! Annoyance = x
 emogator_to_our = {
+    # Neutral
+    '18': 'Neutral',
     # Joy
     '01': 'Joy', '02': 'Joy', '12': 'Joy', '25': 'Joy',
     # Trust
@@ -114,7 +116,7 @@ pat = re.compile(r'^(?P<id>\d{6})-(?P<emo>\d{2})-(?P<inten>\d)\.mp3$', re.I)
 
 columns = [
     'Id','dataset','File',
-    'Joy','Trust','Fear','Surprise','Sadness','Disgust','Anger','Anticipation',
+    'Neutral','Joy','Trust','Fear','Surprise','Sadness','Disgust','Anger','Anticipation',
     'I1','I2','I3',
 ]
 
@@ -138,7 +140,7 @@ for abspath in files:
     inten = m.group('inten')
     
     our = emogator_to_our.get(emo)
-    if our not in ('Joy','Trust','Fear','Surprise','Sadness','Disgust','Anger','Anticipation'):
+    if our not in ('Neutral','Joy','Trust','Fear','Surprise','Sadness','Disgust','Anger','Anticipation'):
         continue
     
     row = OrderedDict((c, 0) for c in columns)
@@ -146,7 +148,7 @@ for abspath in files:
     row['Id'] = rid
     row['File'] = str(pathlib.Path(abspath).relative_to(DATA_DIR))
 
-    if our in ('Joy','Trust','Fear','Surprise','Sadness','Disgust','Anger','Anticipation'):
+    if our in ('Neutral','Joy','Trust','Fear','Surprise','Sadness','Disgust','Anger','Anticipation'):
         row[our] = 1
 
     ix = inten_to_ix.get(inten)
