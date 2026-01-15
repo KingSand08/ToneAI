@@ -3,7 +3,7 @@ from progressbar import printProgressBar
 import os
 from glob import glob
 from dataclasses import dataclass
-
+import torch
 import pandas as pd
 import numpy as np
 import seaborn as sns
@@ -66,28 +66,49 @@ print(f'Loaded {num_loaded} files from dataset.')
 num_loaded = 0
 target_frames = 86  # ≈ 2 seconds with librosa defaults (sr=22050, hop_length=512)
 printProgressBar(0, len(audio_files), prefix='Progress:', suffix='Complete', length=50)
-
-input_features = np.empty((len(audio_files), 2), dtype=object)
+emotion_input_features_list = []
+intensity_input_features_list = []
 
 for afile in audio_files:
     # Extract y = (the raw data), and sr = (integer value of sample rate)
     y, sr = librosa.load(afile)
+    
     # Apply STFT
     D = librosa.stft(y)
+    
     # Retreive Mel
     S = librosa.feature.melspectrogram(y=y,
                                        sr=sr,
                                        n_mels=128 * 2,)
     S_decible_mel = librosa.amplitude_to_db(S, ref=np.max)
+    
     # Extract Log Mel spectrogram
-    mel_spectrogram = librosa.feature.melspectrogram(y=y, sr=sr)
+    mel_spectrogram = librosa.feature.melspectrogram(y=y, sr=sr, n_mels=128)
     log_mel_spectrogram = librosa.power_to_db(mel_spectrogram, ref=np.max)
+
+    # Standardize the length using padding/truncation #? The shape is (n_mels, time_frames) #?
+    fixed_log_mel = librosa.util.fix_length(log_mel_spectrogram, 
+                                            size=target_frames, 
+                                            axis=1, 
+                                            constant_values=0)
+    
+    # Build input for emotion model
+    emotion_sample_features = fixed_log_mel.flatten(order='C')
+    emotion_input_features_list.append(emotion_sample_features)
+    
     # Extract Delta Mel spectrogram
     delta_log_mel_spectrogram = librosa.feature.delta(log_mel_spectrogram)
-    input_features[num_loaded, 0] = log_mel_spectrogram
-    input_features[num_loaded, 1] = delta_log_mel_spectrogram
-    # sample_features = np.stack([(log_mel_spectrogram.T, delta_log_mel_spectrogram.T)], axis=-1)
-    # input_features.append(sample_features)
+    
+    # Standardize the delta spectrogram length too
+    fixed_delta_log_mel = librosa.util.fix_length(delta_log_mel_spectrogram, 
+                                                  size=target_frames, 
+                                                  axis=1,
+                                                  constant_values=0)
+
+    # Build input for intensity model
+    intensity_sample_features = fixed_delta_log_mel.flatten(order='C')
+    intensity_input_features_list.append(intensity_sample_features)
+    
     num_loaded += 1
     printProgressBar(
         num_loaded,
@@ -97,12 +118,13 @@ for afile in audio_files:
         length=50
     )
 
-
 # Save file to avoid preprocessing more
 # np.savetxt('input_features.json', input_features, delimiter=',', fmt='%d', comments='')
 np.savetxt('emotion_targets.csv', emotion_targets, delimiter=',', fmt='%d', comments='')
 np.savetxt('intensity_targets.csv', intensity_targets, delimiter=',', fmt='%d', comments='')
-input_features_array = np.array(input_features, dtype=object)
-np.save('input_features.npy', input_features_array)
+emotion_input_tensor = torch.tensor(np.array(emotion_input_features_list), dtype=torch.float32)
+intensity_input_tensor = torch.tensor(np.array(intensity_input_features_list), dtype=torch.float32)
+print(f"Final EMOTION tensor shape: {emotion_input_tensor.shape}")
+print(f"Final INTENSITY tensor shape: {intensity_input_tensor.shape}")
 print(f'Wrote numpy arrays to file for training in {script_dir}')
 print('Completed preprocessing!')
