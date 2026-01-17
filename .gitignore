@@ -7,3 +7,4 @@
 
 # Tone AI Data Files
 training data/files
+*.pt
